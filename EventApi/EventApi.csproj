@@ -20,13 +20,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Data\" />
     <Folder Include="Dtos\" />
     <Folder Include="Migrations\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Services\" />
     <Folder Include="Security\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
