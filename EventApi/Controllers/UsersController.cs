@@ -1,53 +1,69 @@
-﻿using EventApi.Data;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using EventApi.Data;
+using EventApi.Dtos;
 using EventApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace EventApi.Controllers
+namespace EventApi.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class UsersController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UsersController : ControllerBase
+    private readonly AppDbContext _db;
+    private readonly IMapper _mapper;
+    public UsersController(AppDbContext db, IMapper mapper) { _db = db; _mapper = mapper; }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<UserReadDto>>> GetAll() =>
+        Ok(await _db.Users.AsNoTracking()
+            .ProjectTo<UserReadDto>(_mapper.ConfigurationProvider)
+            .ToListAsync());
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<UserReadDto>> GetById(int id)
     {
-        private readonly AppDbContext _context;
-        public UsersController(AppDbContext context) => _context = context;
+        var dto = await _db.Users.AsNoTracking()
+            .Where(x => x.Id == id)
+            .ProjectTo<UserReadDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync();
+        return dto is null ? NotFound() : Ok(dto);
+    }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers() =>
-            await _context.Users.ToListAsync();
+    [HttpPost]
+    public async Task<ActionResult<UserReadDto>> Create(UserCreateDto dto)
+    {
+        var entity = _mapper.Map<User>(dto);
+        _db.Users.Add(entity);
+        await _db.SaveChangesAsync();
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            return user == null ? NotFound() : user;
-        }
+        var read = await _db.Users.AsNoTracking()
+            .Where(x => x.Id == entity.Id)
+            .ProjectTo<UserReadDto>(_mapper.ConfigurationProvider)
+            .FirstAsync();
 
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
-        }
+        return CreatedAtAction(nameof(GetById), new { id = read.Id }, read);
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
-        {
-            if (id != user.Id) return BadRequest();
-            _context.Entry(user).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, UserUpdateDto dto)
+    {
+        var entity = await _db.Users.FindAsync(id);
+        if (entity is null) return NotFound();
+        _mapper.Map(dto, entity);
+        await _db.SaveChangesAsync();
+        return NoContent();
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var entity = await _db.Users.FindAsync(id);
+        if (entity is null) return NotFound();
+        _db.Users.Remove(entity);
+        await _db.SaveChangesAsync();
+        return NoContent();
     }
 }

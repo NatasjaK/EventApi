@@ -1,55 +1,69 @@
-﻿using EventApi.Data;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using EventApi.Data;
+using EventApi.Dtos;
 using EventApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace EventApi.Controllers
+namespace EventApi.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class BookingsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BookingsController : ControllerBase
+    private readonly AppDbContext _db;
+    private readonly IMapper _mapper;
+    public BookingsController(AppDbContext db, IMapper mapper) { _db = db; _mapper = mapper; }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<BookingReadDto>>> GetAll() =>
+        Ok(await _db.Bookings.AsNoTracking()
+            .ProjectTo<BookingReadDto>(_mapper.ConfigurationProvider)
+            .ToListAsync());
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<BookingReadDto>> GetById(int id)
     {
-        private readonly AppDbContext _context;
-        public BookingsController(AppDbContext context) => _context = context;
+        var dto = await _db.Bookings.AsNoTracking()
+            .Where(b => b.Id == id)
+            .ProjectTo<BookingReadDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync();
+        return dto is null ? NotFound() : Ok(dto);
+    }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookings() =>
-            await _context.Bookings.Include(b => b.User).Include(b => b.Event).ToListAsync();
+    [HttpPost]
+    public async Task<ActionResult<BookingReadDto>> Create(BookingCreateDto dto)
+    {
+        var entity = _mapper.Map<Booking>(dto);
+        _db.Bookings.Add(entity);
+        await _db.SaveChangesAsync();
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Booking>> GetBooking(int id)
-        {
-            var booking = await _context.Bookings
-                .Include(b => b.User).Include(b => b.Event)
-                .FirstOrDefaultAsync(b => b.Id == id);
-            return booking == null ? NotFound() : booking;
-        }
+        var read = await _db.Bookings.AsNoTracking()
+            .Where(b => b.Id == entity.Id)
+            .ProjectTo<BookingReadDto>(_mapper.ConfigurationProvider)
+            .FirstAsync();
 
-        [HttpPost]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
-        {
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking);
-        }
+        return CreatedAtAction(nameof(GetById), new { id = read.Id }, read);
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBooking(int id, Booking booking)
-        {
-            if (id != booking.Id) return BadRequest();
-            _context.Entry(booking).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, BookingUpdateDto dto)
+    {
+        var entity = await _db.Bookings.FindAsync(id);
+        if (entity is null) return NotFound();
+        _mapper.Map(dto, entity);
+        await _db.SaveChangesAsync();
+        return NoContent();
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBooking(int id)
-        {
-            var booking = await _context.Bookings.FindAsync(id);
-            if (booking == null) return NotFound();
-            _context.Bookings.Remove(booking);
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var entity = await _db.Bookings.FindAsync(id);
+        if (entity is null) return NotFound();
+        _db.Bookings.Remove(entity);
+        await _db.SaveChangesAsync();
+        return NoContent();
     }
 }

@@ -7,6 +7,8 @@ C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\EventApi.deps.jso
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\EventApi.runtimeconfig.json
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\EventApi.dll
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\EventApi.pdb
+C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\AutoMapper.dll
+C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\Azure.Core.dll
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\Azure.Identity.dll
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\Humanizer.dll
@@ -47,6 +49,9 @@ C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\Microsoft.OpenApi
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\Microsoft.SqlServer.Server.dll
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\Mono.TextTemplating.dll
+C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\System.ClientModel.dll
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\System.CodeDom.dll
 C:\Users\natas\source\repos\EventApi\EventApi\bin\Debug\net9.0\System.Composition.AttributedModel.dll
@@ -156,10 +161,10 @@ C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.b
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.build.endpoints.json
+C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\EventApi.csproj.Up2Date
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\EventApi.dll
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\refint\EventApi.dll
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\EventApi.pdb
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\EventApi.genruntimeconfig.cache
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\ref\EventApi.dll
-C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

@@ -1,55 +1,69 @@
-﻿using EventApi.Data;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using EventApi.Data;
+using EventApi.Dtos;
 using EventApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace EventApi.Controllers
+namespace EventApi.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class InvoicesController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class InvoicesController : ControllerBase
+    private readonly AppDbContext _db;
+    private readonly IMapper _mapper;
+    public InvoicesController(AppDbContext db, IMapper mapper) { _db = db; _mapper = mapper; }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<InvoiceReadDto>>> GetAll() =>
+        Ok(await _db.Invoices.AsNoTracking()
+            .ProjectTo<InvoiceReadDto>(_mapper.ConfigurationProvider)
+            .ToListAsync());
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<InvoiceReadDto>> GetById(int id)
     {
-        private readonly AppDbContext _context;
-        public InvoicesController(AppDbContext context) => _context = context;
+        var dto = await _db.Invoices.AsNoTracking()
+            .Where(i => i.Id == id)
+            .ProjectTo<InvoiceReadDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync();
+        return dto is null ? NotFound() : Ok(dto);
+    }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Invoice>>> GetInvoices() =>
-            await _context.Invoices.Include(i => i.User).Include(i => i.Event).ToListAsync();
+    [HttpPost]
+    public async Task<ActionResult<InvoiceReadDto>> Create(InvoiceCreateDto dto)
+    {
+        var entity = _mapper.Map<Invoice>(dto);
+        _db.Invoices.Add(entity);
+        await _db.SaveChangesAsync();
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Invoice>> GetInvoice(int id)
-        {
-            var invoice = await _context.Invoices
-                .Include(i => i.User).Include(i => i.Event)
-                .FirstOrDefaultAsync(i => i.Id == id);
-            return invoice == null ? NotFound() : invoice;
-        }
+        var read = await _db.Invoices.AsNoTracking()
+            .Where(i => i.Id == entity.Id)
+            .ProjectTo<InvoiceReadDto>(_mapper.ConfigurationProvider)
+            .FirstAsync();
 
-        [HttpPost]
-        public async Task<ActionResult<Invoice>> PostInvoice(Invoice invoice)
-        {
-            _context.Invoices.Add(invoice);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetInvoice), new { id = invoice.Id }, invoice);
-        }
+        return CreatedAtAction(nameof(GetById), new { id = read.Id }, read);
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutInvoice(int id, Invoice invoice)
-        {
-            if (id != invoice.Id) return BadRequest();
-            _context.Entry(invoice).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, InvoiceUpdateDto dto)
+    {
+        var entity = await _db.Invoices.FindAsync(id);
+        if (entity is null) return NotFound();
+        _mapper.Map(dto, entity);
+        await _db.SaveChangesAsync();
+        return NoContent();
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteInvoice(int id)
-        {
-            var invoice = await _context.Invoices.FindAsync(id);
-            if (invoice == null) return NotFound();
-            _context.Invoices.Remove(invoice);
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var entity = await _db.Invoices.FindAsync(id);
+        if (entity is null) return NotFound();
+        _db.Invoices.Remove(entity);
+        await _db.SaveChangesAsync();
+        return NoContent();
     }
 }
