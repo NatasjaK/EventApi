@@ -161,10 +161,10 @@ C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.b
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\EventApi.csproj.Up2Date
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\EventApi.dll
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\refint\EventApi.dll
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\EventApi.pdb
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\EventApi.genruntimeconfig.cache
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\ref\EventApi.dll
+C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

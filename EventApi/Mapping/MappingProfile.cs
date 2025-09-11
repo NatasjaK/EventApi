@@ -50,11 +50,17 @@ public class MappingProfile : Profile
         CreateMap<InvoiceCreateDto, Invoice>();
         CreateMap<InvoiceUpdateDto, Invoice>();
 
-        // Feedbacks
-        CreateMap<Feedback, FeedbackReadDto>()
-            .ForMember(d => d.EventTitle, o => o.MapFrom(s => s.Event != null ? s.Event.Title : null));
-        CreateMap<FeedbackCreateDto, Feedback>();
-        CreateMap<FeedbackUpdateDto, Feedback>();
+        // Entity 
+        CreateMap<Feedback, FeedbackReadDto>();
+
+        // CreateDto 
+        CreateMap<FeedbackCreateDto, Feedback>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.CreatedAt, o => o.MapFrom(_ => DateTime.UtcNow));
+
+        // UpdateDto 
+        CreateMap<FeedbackUpdateDto, Feedback>()
+            .ForAllMembers(opt => opt.Condition((src, dest, value) => value != null));
 
         // Packages
         CreateMap<Package, PackageReadDto>()

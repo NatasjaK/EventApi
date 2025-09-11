@@ -1,8 +1,9 @@
 ﻿// AI-generated with assistance
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using EventApi.Clients;
 using EventApi.Data;
 using EventApi.Dtos.Dashboard;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventApi.Controllers;
 
@@ -11,7 +12,12 @@ namespace EventApi.Controllers;
 public class DashboardController : ControllerBase
 {
     private readonly AppDbContext _db;
-    public DashboardController(AppDbContext db) { _db = db; }
+    private readonly IPaymentsClient _payments;
+    public DashboardController(AppDbContext db, IPaymentsClient payments) 
+    {
+        _db = db;
+        _payments = payments;
+    }
 
     // GET: /api/dashboard/summary
     [HttpGet("summary")]
@@ -24,9 +30,18 @@ public class DashboardController : ControllerBase
         var totalUsers = await _db.Users.CountAsync();
         var totalBookings = await _db.Bookings.CountAsync();
         var ticketsSold = await _db.Tickets.CountAsync();
-        var totalRevenue = await _db.Transactions.SumAsync(t => (decimal?)t.Amount) ?? 0m;
         var avgRating = Math.Round(await _db.Feedbacks.AverageAsync(f => (double?)f.Rating) ?? 0.0, 2);
         var unreadMessages = await _db.Messages.CountAsync(m => !m.IsRead);
+
+        decimal totalRevenue;
+        try
+        {
+            totalRevenue = await _payments.GetTotalAsync();
+        }
+        catch
+        {
+            totalRevenue = 0m;
+        }
 
         return Ok(new DashboardSummaryDto
         {
@@ -68,29 +83,34 @@ public class DashboardController : ControllerBase
     // GET: /api/dashboard/revenue-range?from=2025-05-01&to=2025-05-31
     [HttpGet("revenue-range")]
     public async Task<ActionResult<IEnumerable<RevenuePointDto>>> GetRevenueRange(
-    [FromQuery] DateTime? from, [FromQuery] DateTime? to)
+        [FromQuery] DateTime? from, [FromQuery] DateTime? to)
     {
-        var end = (to ?? DateTime.UtcNow).Date.AddDays(1);
-        var start = (from ?? DateTime.UtcNow.AddDays(-30)).Date;
+        try
+        {
+            return Ok(await _payments.GetRangeAsync(from, to));
+        }
+        catch
+        {
+            var end = (to ?? DateTime.UtcNow).Date.AddDays(1);
+            var start = (from ?? DateTime.UtcNow.AddDays(-30)).Date;
 
-        var grouped = await _db.Transactions
-            .AsNoTracking()
-            .Where(t => t.Date >= start && t.Date < end)
-            .GroupBy(t => t.Date.Date)               
-            .Select(g => new { Date = g.Key, Amount = g.Sum(x => x.Amount) })
-            .OrderBy(x => x.Date)
-            .ToListAsync();
+            var grouped = await _db.Transactions.AsNoTracking()
+                .Where(t => t.Date >= start && t.Date < end)
+                .GroupBy(t => t.Date.Date)
+                .Select(g => new { Date = g.Key, Amount = g.Sum(x => x.Amount) })
+                .OrderBy(x => x.Date)
+                .ToListAsync();
 
-        var data = grouped
-            .Select(x => new RevenuePointDto
+            var data = grouped.Select(x => new RevenuePointDto
             {
-                Label = x.Date.ToString("yyyy-MM-dd"), 
+                Label = x.Date.ToString("yyyy-MM-dd"),
                 Amount = x.Amount
-            })
-            .ToList();
+            });
+            return Ok(data);
 
-        return Ok(data);
+        }
     }
+
 
     // GET: /api/dashboard/top-events?limit=5
     [HttpGet("top-events")]
@@ -115,6 +135,8 @@ public class DashboardController : ControllerBase
 
         return Ok(items);
     }
+
+    
 
     // GET: /api/dashboard/upcoming?days=30
     [HttpGet("upcoming")]
