@@ -10,8 +10,8 @@
         public Event Event { get; set; }
 
         public DateTime BookingDate { get; set; }
-        public string Status { get; set; }
+        public string Status { get; set; } = "Pending";
 
-        public ICollection<Ticket> Tickets { get; set; }
+        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
     }
 }

@@ -7,6 +7,6 @@
         public string MapImage { get; set; }
         public string Address { get; set; }
 
-        public ICollection<Event> Events { get; set; }
+        public ICollection<Event> Events { get; set; } = new List<Event>();
     }
 }

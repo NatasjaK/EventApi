@@ -7,83 +7,123 @@ namespace EventApi.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Event> Events { get; set; }
-        public DbSet<Booking> Bookings { get; set; }
-        public DbSet<Ticket> Tickets { get; set; }
-        public DbSet<Invoice> Invoices { get; set; }
-        public DbSet<Feedback> Feedbacks { get; set; }
-        public DbSet<Venue> Venues { get; set; }
-        public DbSet<Package> Packages { get; set; }
-        public DbSet<Merchandise> Merchandises { get; set; }
-        public DbSet<Message> Messages { get; set; }
-        public DbSet<CalendarEntry> CalendarEntries { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Event> Events { get; set; } = null!;
+        public DbSet<Booking> Bookings { get; set; } = null!;
+        public DbSet<Ticket> Tickets { get; set; } = null!;
+        public DbSet<Invoice> Invoices { get; set; } = null!;
+        public DbSet<Feedback> Feedbacks { get; set; } = null!;
+        public DbSet<Venue> Venues { get; set; } = null!;
+        public DbSet<Package> Packages { get; set; } = null!;
+        public DbSet<Merchandise> Merchandises { get; set; } = null!;
+        public DbSet<Message> Messages { get; set; } = null!;
+        public DbSet<CalendarEntry> CalendarEntries { get; set; } = null!;
+        public DbSet<Transaction> Transactions { get; set; } = null!;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void ConfigureConventions(ModelConfigurationBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
+            builder.Properties<decimal>().HavePrecision(18, 2);
+        }
 
+        protected override void OnModelCreating(ModelBuilder b)
+        {
+            base.OnModelCreating(b);
 
-            modelBuilder.Entity<Booking>()
-                .HasOne(b => b.User)
+            b.Entity<Event>().HasIndex(e => e.Date);
+            b.Entity<Booking>().HasIndex(x => x.BookingDate);
+
+            b.Entity<Booking>()
+                .HasOne(bk => bk.User)
                 .WithMany(u => u.Bookings)
-                .HasForeignKey(b => b.UserId);
+                .HasForeignKey(bk => bk.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Booking>()
-                .HasOne(b => b.Event)
+            b.Entity<Booking>()
+                .HasOne(bk => bk.Event)
                 .WithMany(e => e.Bookings)
-                .HasForeignKey(b => b.EventId);
+                .HasForeignKey(bk => bk.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Ticket>()
+            b.Entity<Ticket>()
                 .HasOne(t => t.Booking)
-                .WithMany(b => b.Tickets)
-                .HasForeignKey(t => t.BookingId);
+                .WithMany(bk => bk.Tickets)
+                .HasForeignKey(t => t.BookingId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Invoice>()
+            b.Entity<Ticket>()
+                .HasOne(t => t.Event)
+                .WithMany(e => e.Tickets)
+                .HasForeignKey(t => t.EventId)          
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            b.Entity<Invoice>()
                 .HasOne(i => i.User)
                 .WithMany(u => u.Invoices)
-                .HasForeignKey(i => i.UserId);
+                .HasForeignKey(i => i.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Invoice>()
+            b.Entity<Invoice>()
                 .HasOne(i => i.Event)
                 .WithMany(e => e.Invoices)
-                .HasForeignKey(i => i.EventId);
+                .HasForeignKey(i => i.EventId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Feedback>()
+            b.Entity<Feedback>()
                 .HasOne(f => f.Event)
                 .WithMany(e => e.Feedbacks)
-                .HasForeignKey(f => f.EventId);
+                .HasForeignKey(f => f.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Package>()
+            b.Entity<Package>()
                 .HasOne(p => p.Event)
                 .WithMany(e => e.Packages)
-                .HasForeignKey(p => p.EventId);
+                .HasForeignKey(p => p.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Merchandise>()
+            b.Entity<Merchandise>()
                 .HasOne(m => m.Package)
                 .WithMany(p => p.Merchandises)
-                .HasForeignKey(m => m.PackageId);
+                .HasForeignKey(m => m.PackageId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Message>()
+            b.Entity<Message>()
                 .HasOne(m => m.User)
                 .WithMany(u => u.Messages)
-                .HasForeignKey(m => m.UserId);
+                .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<CalendarEntry>()
+            b.Entity<CalendarEntry>()
                 .HasOne(c => c.Event)
                 .WithMany(e => e.CalendarEntries)
-                .HasForeignKey(c => c.EventId);
+                .HasForeignKey(c => c.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Transaction>()
-                .HasOne(t => t.Event)
-                .WithMany(e => e.Transactions)
-                .HasForeignKey(t => t.EventId);
-
-            modelBuilder.Entity<Event>()
+            b.Entity<Event>()
                 .HasOne(e => e.Venue)
                 .WithMany(v => v.Events)
-                .HasForeignKey(e => e.VenueId);
+                .HasForeignKey(e => e.VenueId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            b.Entity<Transaction>()
+                .HasOne(t => t.Event)
+                .WithMany(e => e.Transactions)
+                .HasForeignKey(t => t.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            b.Entity<Message>().Property(m => m.IsRead).HasDefaultValue(false);
+            b.Entity<Booking>().Property(bk => bk.Status).HasDefaultValue("Pending");
+
+            b.Entity<User>().Property(u => u.Name)
+                .HasMaxLength(120).IsRequired();
+
+            b.Entity<Event>().Property(e => e.Title)
+                .HasMaxLength(200).IsRequired();
+
+            b.Entity<Venue>().Property(v => v.Name)
+                .HasMaxLength(150).IsRequired();
+
+            b.Entity<Ticket>().Property(t => t.SeatNumber)
+                .HasMaxLength(20);
         }
     }
 }

@@ -7,8 +7,8 @@
         public string Email { get; set; }
         public string PasswordHash { get; set; }
 
-        public ICollection<Booking> Bookings { get; set; }
-        public ICollection<Invoice> Invoices { get; set; }
-        public ICollection<Message> Messages { get; set; }
+        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+        public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
+        public ICollection<Message> Messages { get; set; } = new List<Message>();
     }
 }

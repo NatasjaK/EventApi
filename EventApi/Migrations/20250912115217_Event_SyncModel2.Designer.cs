@@ -4,6 +4,7 @@ using EventApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250912115217_Event_SyncModel2")]
+    partial class Event_SyncModel2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -505,13 +508,11 @@ namespace EventApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EventApi.Models.Event", "Event")
+                    b.HasOne("EventApi.Models.Event", null)
                         .WithMany("Tickets")
                         .HasForeignKey("EventId");
 
                     b.Navigation("Booking");
-
-                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("EventApi.Models.Transaction", b =>

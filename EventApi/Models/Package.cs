@@ -10,6 +10,6 @@
         public string Title { get; set; }
         public decimal Price { get; set; }
 
-        public ICollection<Merchandise> Merchandises { get; set; }
+        public ICollection<Merchandise> Merchandises { get; set; } = new List<Merchandise>();
     }
 }

@@ -167,4 +167,3 @@ C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\refint\EventApi.d
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\EventApi.pdb
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\EventApi.genruntimeconfig.cache
 C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\ref\EventApi.dll
-C:\Users\natas\source\repos\EventApi\EventApi\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
