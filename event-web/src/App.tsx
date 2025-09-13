@@ -1,20 +1,31 @@
-import { Link, Route, Routes, NavLink } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+import Layout from "./layout/Layout";
 import Dashboard from "./pages/Dashboard";
 import Events from "./pages/Events";
+import EventDetails from "./pages/EventDetails";
+import Venues from "./pages/Venues"; 
+import CalendarPage from "./pages/Calendar";
+import Financials from "./pages/Financials";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Contact from "./pages/Contact";
+import Bookings from "./pages/Bookings";
 
 export default function App() {
   return (
-    <div style={{ maxWidth: 1200, margin: "0 auto", padding: 16 }}>
-      <header style={{ display: "flex", gap: 16, alignItems: "center" }}>
-        <h2 style={{ marginRight: "auto" }}><Link to="/">Ventize</Link></h2>
-        <NavLink to="/" end>Dashboard</NavLink>
-        <NavLink to="/events">Events</NavLink>
-      </header>
-      <hr />
-      <Routes>
+    <Routes>
+      <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/events" element={<Events />} />
-      </Routes>
-    </div>
+        <Route path="/events/:id" element={<EventDetails />} />
+        <Route path="/venues" element={<Venues />} />
+        <Route path="/calendar" element={<CalendarPage />} />
+        <Route path="/financials" element={<Financials />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/bookings" element={<Bookings />} />
+      </Route>
+    </Routes>
   );
 }

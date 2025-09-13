@@ -1,14 +1,12 @@
-const BASE = import.meta.env.VITE_API_BASE as string;
+const BASE = import.meta.env.VITE_API_BASE ?? '';  
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    headers: { "Content-Type": "application/json" },
-    ...init
-  });
+  const url = BASE ? `${BASE}${path}` : path;
+  const res = await fetch(url, { headers: { "Content-Type": "application/json" }, ...init });
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-  if (res.status === 204) return undefined as T;
-  return res.json() as Promise<T>;
+  return res.status === 204 ? (undefined as T) : res.json();
 }
+
 
 export const api = {
   get: <T>(p: string) => request<T>(p),
