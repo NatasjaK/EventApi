@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PaymentsApi.Data;
 
@@ -11,9 +12,11 @@ using PaymentsApi.Data;
 namespace PaymentsApi.Migrations
 {
     [DbContext(typeof(PaymentsDb))]
-    partial class PaymentsDbModelSnapshot : ModelSnapshot
+    [Migration("20250912084735_Payments_PrecisionAndIndexes")]
+    partial class Payments_PrecisionAndIndexes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,10 +44,6 @@ namespace PaymentsApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Date");
-
-                    b.HasIndex("EventId");
 
                     b.ToTable("Transactions");
                 });
