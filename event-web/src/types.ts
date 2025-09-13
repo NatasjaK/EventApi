@@ -100,3 +100,10 @@ export type UserRead = {
   name: string;
   email?: string;
 };
+
+export type GalleryItem = {
+  id: number;
+  eventId?: number | null;
+  url: string;
+  caption?: string | null;
+};

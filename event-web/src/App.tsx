@@ -10,6 +10,8 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Contact from "./pages/Contact";
 import Bookings from "./pages/Bookings";
+import Gallery from "./pages/Gallery";
+import FeedbackPage from "./pages/Feedback";
 
 export default function App() {
   return (
@@ -25,6 +27,10 @@ export default function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/bookings" element={<Bookings />} />
+        <Route path="/feedback" element={<FeedbackPage />} />
+        <Route path="/gallery" element={<Gallery />} />
+        
+        
       </Route>
     </Routes>
   );
