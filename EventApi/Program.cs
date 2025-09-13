@@ -37,6 +37,7 @@ builder.Services.AddHttpClient<IPaymentsClient, PaymentsClient>(c =>
 });
 
 var app = builder.Build();
+app.UseStaticFiles();
 
 app.Logger.LogInformation("PaymentsApi BaseUrl = {Url}", paymentsBaseUrl);
 
