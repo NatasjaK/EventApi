@@ -6,7 +6,7 @@ Event platform:  **events/venues**, **bookings/tickets**, **feedback**, **calend
 - EventApi (Swagger): https://eventapi20250914080929-fxg3g8gxauc2b2gw.swedencentral-01.azurewebsites.net/swagger/index.html
 - PaymentsApi (Swagger): https://paymentsapi20250914130000-dnbkgtcrfsgjh0cy.swedencentral-01.azurewebsites.net/swagger/index.html
 
-## Funktioner
+## Functions
 - CRUD: Events, Venues, Bookings, Tickets, Feedback
 - Dashboard (KPI + Revenue 30d), Calender, Finances
 - Health: `GET /health`, Swagger: `GET /swagger`
