@@ -3,6 +3,9 @@ import { api } from "../lib/api";
 import type { FeedbackRead, FeedbackCreate } from "../types";
 
 type EventLite = { id:number; title:string };
+// högst upp i filen
+const fmtDate = (v?: string | null) => (v ? new Date(v).toLocaleString() : "—");
+
 
 export default function FeedbackPage() {
   const qc = useQueryClient();
@@ -70,7 +73,7 @@ export default function FeedbackPage() {
                 <td>{titleById.get(f.eventId) ?? `#${f.eventId}`}</td>
                 <td>{f.rating}</td>
                 <td>{f.comment ?? "—"}</td>
-                <td>{new Date(f.createdAt).toLocaleString()}</td>
+                <td>{fmtDate(f.createdAt)}</td>
               </tr>
             ))}
           </tbody>
