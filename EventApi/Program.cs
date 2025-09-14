@@ -41,20 +41,14 @@ app.UseStaticFiles();
 
 app.Logger.LogInformation("PaymentsApi BaseUrl = {Url}", paymentsBaseUrl);
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else
-{
-    app.UseHttpsRedirection();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("AllowFrontend");
 app.UseAuthorization();
 app.MapControllers();
 
+app.MapGet("/", () => Results.Redirect("/swagger"));
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 app.MapGet("/_config", (IConfiguration cfg) => Results.Ok(new
 {
