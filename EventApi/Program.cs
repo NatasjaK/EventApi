@@ -8,17 +8,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 var paymentsBaseUrl = builder.Configuration["PaymentsApi:BaseUrl"];
 if (string.IsNullOrWhiteSpace(paymentsBaseUrl))
-{
     throw new InvalidOperationException("Missing configuration: PaymentsApi:BaseUrl");
-}
 
-builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+var allowedOrigins =
+    builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? new[] { "http://localhost:5173", "https://localhost:5173" };
 
 builder.Services.AddCors(o => o.AddPolicy("AllowFrontend", p =>
-    p.WithOrigins("http://localhost:5173", "https://localhost:5173")
+    p.WithOrigins(allowedOrigins)
      .AllowAnyHeader()
      .AllowAnyMethod()
 ));
+
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 builder.Services.AddControllers()
     .AddJsonOptions(o =>
